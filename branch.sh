@@ -1,8 +1,10 @@
+
 #!/bin/bash
 
+#Process git log branches and output it to json files 
 mkdir ~/branchjson
 
-cd EPC/
+cd EPC/ #change this to your git repository
 for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:?HEAD|master)$'); do
     echo "${branch##*/}"
     git checkout  "${branch##*/}"
