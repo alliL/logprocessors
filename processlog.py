@@ -25,7 +25,7 @@ Y = 8
 X = 20
 
 username = "baba"
-password = "baba"
+password = ""
 
 #server connection for jenkins
 jenkinsserver="USDVRLNX01"
