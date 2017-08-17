@@ -25,7 +25,7 @@ Y = 8
 X = 20
 
 username = "baba"
-password = ""
+password = "baba"
 
 #server connection for jenkins
 jenkinsserver="USDVRLNX01"
@@ -156,7 +156,7 @@ def fileWrite():
     #loop through work streams
     for filename in  os.listdir(gitjsondir):
             if filename.endswith(".json"):
-                branchname.append(filename.replace('.json',''))
+               
                 #jenkins
                 NumofSuccess,NumofFailure,Exit_EnterState,Unknown,buildNum,branch = jenkinslog(filename)
                 #nexus
@@ -164,8 +164,7 @@ def fileWrite():
                 #gitlog
                 Insertions,Deletions,Commits = gitlog(filename)
                 
-                if Commits == 0 or buildNum == 0:
-                    print ("Done Processing " + branch) 
+                if Commits == 0 or buildNum == 0: 
                     continue 
                 #write to file
                 Totalsize = convert(Totalsize)
@@ -178,8 +177,9 @@ def fileWrite():
                 #file.write(("Exit_EnterState: " +   str(Exit_EnterState)      + "\n"))
                 file.write(("Unknown: " + str(Unknown) + "\n"))
                 file.write(("Total_Size: " + str(Totalsize) + "\n" ))
-                print ("Processing " + branch + "...")
-               
+                #print ("Processing " + branch + "...")
+
+                
                 branchname.append(filename.replace('.json',''))
                 insertions.append(int(Insertions))
                 deletions.append(int(Deletions))
@@ -188,7 +188,9 @@ def fileWrite():
                 failure.append(int(NumofFailure))
                 size.append(Totalsize)
                 builds.append(int(buildNum)) 
-                print ("Done Processing " + branch)           
+                
+                break
+    
     return branchname,insertions,deletions,commits,\
         success,failure,size,builds           
 
@@ -198,10 +200,11 @@ def plot():
     branch,insertions,deletions,commits,success,failure,size,builds = fileWrite()
     IDC = zip(insertions,deletions,commits)
     SFB = zip(success,failure,builds)
+
     
     #bar charts
     #Size of Builds for Each Branch
-    #figure1 = uniBar(branch,size,'Size_of_Builds_for_Each_Branch','Branch','Size in Bytes',1000000)
+    figure1 = uniBar(branch,size,'Size_of_Builds_for_Each_Branch','Branch','Size in Bytes',1000000)
     #Number of Builds for each branch
     figure2 = uniBar(branch,builds,'Number_of Builds_for_each_branch','Branch','builds',1)
     #number of commits for each branch
@@ -255,7 +258,7 @@ def multiBar(x,y,title,xlabel,ylabel,legends):
   
     green = ax.bar(ind, greenvals, width, color='g',label=legends[2])
     red = ax.bar(ind+width, redvals, width, color='r',label=legends[1])
-    #blue= ax.bar(ind+width*2,bluevals, width, color='b',label=legends[0])
+    blue= ax.bar(ind+width*2,bluevals, width, color='b',label=legends[0])
 
     #axes parameter
     ax.set_title(title.replace("_"," "))
@@ -270,10 +273,10 @@ def multiBar(x,y,title,xlabel,ylabel,legends):
             h = rect.get_height()
             ax.text(rect.get_x()+rect.get_width()/2., 1.05*h, '%d'%int(h),
                     ha='center', va='bottom')
-    #label
+    
     autolabel(green)
     autolabel(red)
-    #autolabel(blue)
+    autolabel(blue)
    
     plt.draw()
     ax.legend()
@@ -289,7 +292,7 @@ def uniBar(a,b,title,xlabel,ylabel,scale):
         y_pos = np.arange(len(x))
         fig, ax = plt.subplots()
         w = 0.40
-        
+       
         
         sizerect = ax.bar(y_pos, y,width=w,color='r',align='center')
         ax.set_title(title.replace("_"," "))
