@@ -1,22 +1,32 @@
-
 #!/bin/bash
 
-#Process git log branches and output it to json files 
-mkdir ~/branchjson
 
-cd EPC/ #change this to your git repository
+directory="branchjson"
+gitbranch="EPC"
+
+if [  -d "$directory" ]; then
+	
+	rm -rf $directory
+fi
+
+echo "Getting Git logs"
+
+mkdir ~/$directory
+cd ~/$gitbranch/
 for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:?HEAD|master)$'); do
     echo "${branch##*/}"
     git checkout  "${branch##*/}"
     
-    git log \
+    git log master..."${branch##*/}"\
+    --date=local --after="2017-07-01T16:36:00-07:00" \
     --pretty=format:'{%n  "commit": "%H",%n  "author": "%aN <%aE>",%n  "date": "%ad",%n  "message": "%f"%n},' \
     $@ | \
     perl -pe 'BEGIN{print "["}; END{print "]\n"}' | \
     perl -pe 's/},]/}]/'> log.json
     sed 's/\\/\\\\/g' log.json > newlog
     
-    git log \
+    git log master..."${branch##*/}"\
+     --date=local --after="2017-07-01T16:36:00-07:00" \
     --numstat \
     --format='%H' \
     $@ | \
@@ -38,7 +48,9 @@ for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:
 	
      jq --slurp '.[1] as $logstat | .[0] | map(.paths = $logstat[.commit])' newlog statlog > "${branch##*/}".json
 	rm -rf log.json newlog statlog stat.json
-	mv "${branch##*/}".json ~/branchjson
+	
+	mv "${branch##*/}".json ~/$directory
+		
 done
 
-
+echo "Git logs Done"
