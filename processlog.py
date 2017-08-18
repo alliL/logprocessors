@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+
+#finish clean
+#
+
 #process  log files
 import os
 import paramiko  # to connect to nexus and jenkins server
@@ -25,7 +29,7 @@ Y = 8
 X = 20
 
 username = "baba"
-password = ""
+password = "baba"
 
 #server connection for jenkins
 jenkinsserver="USDVRLNX01"
@@ -47,6 +51,7 @@ nexus.connect(nexusserver, username=username, password=password)
 #files and directory
 cwd = os.getcwd()
 directory = cwd 
+
 
 gitjsondir = 'branchjson'
 logfile = directory + "/" + "logger.txt"
@@ -189,8 +194,6 @@ def fileWrite():
                 size.append(Totalsize)
                 builds.append(int(buildNum)) 
                 
-                break
-    
     return branchname,insertions,deletions,commits,\
         success,failure,size,builds           
 
@@ -198,7 +201,7 @@ def fileWrite():
 #creat plots   
 def plot():
     branch,insertions,deletions,commits,success,failure,size,builds = fileWrite()
-    IDC = zip(insertions,deletions,commits)
+    ID = zip(insertions,deletions,commits)
     SFB = zip(success,failure,builds)
 
     
@@ -247,7 +250,7 @@ def pieChart(label_list,x_list,title):
     fig.set_size_inches(X, Y)
     fig.savefig((title + "_piechart" + ".png"), bbox_inches='tight')
 
-#multiple bar chat
+#multiple bar charts
 #N = no of bars,x = x-axis,y- y-axis
 def multiBar(x,y,title,xlabel,ylabel,legends):
     
@@ -314,7 +317,14 @@ def uniBar(a,b,title,xlabel,ylabel,scale):
         fig.savefig((title + "_barchart" + ".png"), bbox_inches='tight')
       
 
-       
+def clean():
+    
+    chartdir="Charts"
+    os.rmdir('branchjson')
+    os.mkdir(chartdir)
+    
+    
+    
 #main
 def main():
     plot()

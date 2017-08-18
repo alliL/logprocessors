@@ -6,9 +6,13 @@ gitbranch="EPC"
 
 if [  -d "$directory" ]; then
 	
-	rm -rf $directory
+	rm -rf ~/$directory
 fi
 
+
+cd ~/logprocessors
+	rm -rf ~/logprocessors/branchjson
+cd .
 echo "Getting Git logs"
 
 mkdir ~/$directory
@@ -18,7 +22,7 @@ for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:
     git checkout  "${branch##*/}"
     
     git log master..."${branch##*/}"\
-    --date=local --after="2017-07-01T16:36:00-07:00" \
+    --date=local --after="2017-06-01T16:36:00-07:00" \
     --pretty=format:'{%n  "commit": "%H",%n  "author": "%aN <%aE>",%n  "date": "%ad",%n  "message": "%f"%n},' \
     $@ | \
     perl -pe 'BEGIN{print "["}; END{print "]\n"}' | \
@@ -26,7 +30,7 @@ for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:
     sed 's/\\/\\\\/g' log.json > newlog
     
     git log master..."${branch##*/}"\
-     --date=local --after="2017-07-01T16:36:00-07:00" \
+     --date=local --after="2017-06-01T16:36:00-07:00" \
     --numstat \
     --format='%H' \
     $@ | \
@@ -50,7 +54,9 @@ for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:
 	rm -rf log.json newlog statlog stat.json
 	
 	mv "${branch##*/}".json ~/$directory
-		
+			
 done
+mv ~/$directory ~/logprocessors
 
 echo "Git logs Done"
+
