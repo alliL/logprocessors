@@ -18,7 +18,7 @@ TYPE = 0
 KEY = 1
 SPRINT = 3
 
-book = xlrd.open_workbook("C:/Users/awslee/PycharmProjects/August2017/JIRA_Sprints.xlsx")
+book = xlrd.open_workbook("JIRA_Sprints.xlsx")
 # get the first worksheet
 sheet = book.sheet_by_index(0)
 
